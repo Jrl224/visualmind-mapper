@@ -28,34 +28,43 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Analyze the given text and return a JSON object with the following structure:
-              {
-                "keyPhrases": [list of 5 most important phrases],
-                "categories": {
-                  "category1": score,
-                  "category2": score,
-                  ...
-                },
-                "keywords": [
-                  { "text": "keyword", "value": importance_score },
-                  ...
-                ]
-              }
-              Ensure scores are numbers between 0 and 100.`
+            content: 'You are an AI that analyzes text and returns a JSON object. The object must contain: keyPhrases (array of 5 strings), categories (object with string keys and number values between 0-100), and keywords (array of objects with text and value properties). Always return valid JSON.'
           },
           { role: 'user', content: text }
         ],
+        response_format: { type: "json_object" }
       }),
     });
 
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.statusText}`);
+    }
+
     const data = await response.json();
-    const analysis = JSON.parse(data.choices[0].message.content);
+    console.log('OpenAI response:', data);
+
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response from OpenAI');
+    }
+
+    let analysis;
+    try {
+      analysis = JSON.parse(data.choices[0].message.content);
+    } catch (parseError) {
+      console.error('Failed to parse OpenAI response:', data.choices[0].message.content);
+      throw new Error('Failed to parse AI response');
+    }
+
+    // Validate the analysis structure
+    if (!analysis.keyPhrases || !analysis.categories || !analysis.keywords) {
+      throw new Error('Invalid analysis structure');
+    }
 
     return new Response(JSON.stringify(analysis), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error in analyze-content function:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
