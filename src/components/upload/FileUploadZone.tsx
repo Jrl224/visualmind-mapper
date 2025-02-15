@@ -4,14 +4,75 @@ import Dropzone from 'react-dropzone';
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FileUp } from "lucide-react";
+import { extractTextFromFile, analyzeText } from '@/lib/utils/file-processing';
+import WordCloud from '@/components/visualizations/WordCloud';
+import Chart from '@/components/visualizations/Chart';
+import MindMap from '@/components/visualizations/MindMap';
 
 const FileUploadZone: React.FC = () => {
     const [files, setFiles] = useState<File[]>([]);
+    const [visualizationData, setVisualizationData] = useState<any>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const onDrop = (acceptedFiles: File[]) => {
         setFiles(acceptedFiles);
+        setVisualizationData(null);
         if (acceptedFiles.length > 0) {
             toast.success("File uploaded successfully!");
+        }
+    };
+
+    const generateVisualizations = async () => {
+        if (files.length === 0) {
+            toast.error("Please upload a file first");
+            return;
+        }
+
+        setIsProcessing(true);
+        try {
+            const file = files[0];
+            const text = await extractTextFromFile(file);
+            const analysisResult = analyzeText(text);
+
+            // Example visualization data
+            const demoData = {
+                wordCloud: [
+                    { text: 'Example', value: 64 },
+                    { text: 'Visualization', value: 42 },
+                    { text: 'Data', value: 35 }
+                ],
+                chart: {
+                    labels: ['Category A', 'Category B', 'Category C'],
+                    datasets: [{
+                        label: 'Sample Data',
+                        data: [12, 19, 3],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 206, 86, 0.5)'
+                        ]
+                    }]
+                },
+                mindMap: {
+                    nodes: [
+                        { id: 1, label: 'Central Topic' },
+                        { id: 2, label: 'Subtopic 1' },
+                        { id: 3, label: 'Subtopic 2' }
+                    ],
+                    edges: [
+                        { source: 1, target: 2 },
+                        { source: 1, target: 3 }
+                    ]
+                }
+            };
+
+            setVisualizationData(demoData);
+            toast.success("Visualizations generated successfully!");
+        } catch (error) {
+            toast.error("Error generating visualizations");
+            console.error(error);
+        } finally {
+            setIsProcessing(false);
         }
     };
 
@@ -54,13 +115,40 @@ const FileUploadZone: React.FC = () => {
                     <div className="mt-4">
                         <Button 
                             className="w-full"
-                            onClick={() => {
-                                // Here we'll add the visualization logic in the next phase
-                                toast.success("Starting visualization process...");
-                            }}
+                            onClick={generateVisualizations}
+                            disabled={isProcessing}
                         >
-                            Generate Visualizations
+                            {isProcessing ? "Generating..." : "Generate Visualizations"}
                         </Button>
+                    </div>
+                </div>
+            )}
+            
+            {visualizationData && (
+                <div className="visualizations mt-8 space-y-8">
+                    <div className="visualization-section">
+                        <h3 className="text-lg font-semibold mb-4">Word Cloud</h3>
+                        <div className="h-64 bg-gray-50 rounded-lg p-4">
+                            <WordCloud data={visualizationData.wordCloud} />
+                        </div>
+                    </div>
+                    
+                    <div className="visualization-section">
+                        <h3 className="text-lg font-semibold mb-4">Chart Analysis</h3>
+                        <div className="h-64 bg-gray-50 rounded-lg p-4">
+                            <Chart 
+                                type="bar"
+                                data={visualizationData.chart}
+                                options={{ responsive: true, maintainAspectRatio: false }}
+                            />
+                        </div>
+                    </div>
+                    
+                    <div className="visualization-section">
+                        <h3 className="text-lg font-semibold mb-4">Mind Map</h3>
+                        <div className="h-64 bg-gray-50 rounded-lg p-4">
+                            <MindMap data={visualizationData.mindMap} />
+                        </div>
                     </div>
                 </div>
             )}
