@@ -19,6 +19,7 @@ export type Database = {
           content_structure: Json | null
           content_type: string | null
           created_at: string | null
+          description: string | null
           document_type: string | null
           error_message: string | null
           extracted_text: string | null
@@ -34,12 +35,17 @@ export type Database = {
           processing_status:
             | Database["public"]["Enums"]["file_processing_status"]
             | null
+          public: boolean | null
           size: number | null
           status: string | null
+          thumbnail_url: string | null
+          title: string | null
           updated_at: string | null
           user_id: string | null
           visualization_config: Json | null
+          visualization_data: Json | null
           visualization_suggestions: Json | null
+          visualization_type: string | null
         }
         Insert: {
           ai_analysis?: Json | null
@@ -50,6 +56,7 @@ export type Database = {
           content_structure?: Json | null
           content_type?: string | null
           created_at?: string | null
+          description?: string | null
           document_type?: string | null
           error_message?: string | null
           extracted_text?: string | null
@@ -65,12 +72,17 @@ export type Database = {
           processing_status?:
             | Database["public"]["Enums"]["file_processing_status"]
             | null
+          public?: boolean | null
           size?: number | null
           status?: string | null
+          thumbnail_url?: string | null
+          title?: string | null
           updated_at?: string | null
           user_id?: string | null
           visualization_config?: Json | null
+          visualization_data?: Json | null
           visualization_suggestions?: Json | null
+          visualization_type?: string | null
         }
         Update: {
           ai_analysis?: Json | null
@@ -81,6 +93,7 @@ export type Database = {
           content_structure?: Json | null
           content_type?: string | null
           created_at?: string | null
+          description?: string | null
           document_type?: string | null
           error_message?: string | null
           extracted_text?: string | null
@@ -96,12 +109,17 @@ export type Database = {
           processing_status?:
             | Database["public"]["Enums"]["file_processing_status"]
             | null
+          public?: boolean | null
           size?: number | null
           status?: string | null
+          thumbnail_url?: string | null
+          title?: string | null
           updated_at?: string | null
           user_id?: string | null
           visualization_config?: Json | null
+          visualization_data?: Json | null
           visualization_suggestions?: Json | null
+          visualization_type?: string | null
         }
         Relationships: []
       }
