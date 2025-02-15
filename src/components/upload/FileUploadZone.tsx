@@ -31,46 +31,19 @@ const FileUploadZone: React.FC = () => {
         setIsProcessing(true);
         try {
             const file = files[0];
+            console.log('Processing file:', file.name); // Debug log
+            
             const text = await extractTextFromFile(file);
+            console.log('Extracted text length:', text.length); // Debug log
+            
             const analysisResult = analyzeText(text);
-
-            // Example visualization data
-            const demoData = {
-                wordCloud: [
-                    { text: 'Example', value: 64 },
-                    { text: 'Visualization', value: 42 },
-                    { text: 'Data', value: 35 }
-                ],
-                chart: {
-                    labels: ['Category A', 'Category B', 'Category C'],
-                    datasets: [{
-                        label: 'Sample Data',
-                        data: [12, 19, 3],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(54, 162, 235, 0.5)',
-                            'rgba(255, 206, 86, 0.5)'
-                        ]
-                    }]
-                },
-                mindMap: {
-                    nodes: [
-                        { id: 1, label: 'Central Topic' },
-                        { id: 2, label: 'Subtopic 1' },
-                        { id: 3, label: 'Subtopic 2' }
-                    ],
-                    edges: [
-                        { source: 1, target: 2 },
-                        { source: 1, target: 3 }
-                    ]
-                }
-            };
-
-            setVisualizationData(demoData);
+            console.log('Analysis result:', analysisResult); // Debug log
+            
+            setVisualizationData(analysisResult); // Use the actual analysis result instead of demo data
             toast.success("Visualizations generated successfully!");
         } catch (error) {
             toast.error("Error generating visualizations");
-            console.error(error);
+            console.error('Error in generateVisualizations:', error);
         } finally {
             setIsProcessing(false);
         }
