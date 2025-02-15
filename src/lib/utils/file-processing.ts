@@ -1,11 +1,6 @@
 
 import { v4 as uuidv4 } from 'uuid';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { supabase } from "@/integrations/supabase/client";
 
 export const generateFileId = () => {
     return uuidv4();
