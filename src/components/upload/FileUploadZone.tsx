@@ -31,18 +31,18 @@ const FileUploadZone: React.FC = () => {
         setIsProcessing(true);
         try {
             const file = files[0];
-            console.log('Processing file:', file.name); // Debug log
+            console.log('Processing file:', file.name);
             
             const text = await extractTextFromFile(file);
-            console.log('Extracted text length:', text.length); // Debug log
+            console.log('Extracted text length:', text.length);
             
-            const analysisResult = analyzeText(text);
-            console.log('Analysis result:', analysisResult); // Debug log
+            const analysisResult = await analyzeText(text); // Note the async/await here
+            console.log('AI Analysis result:', analysisResult);
             
-            setVisualizationData(analysisResult); // Use the actual analysis result instead of demo data
-            toast.success("Visualizations generated successfully!");
+            setVisualizationData(analysisResult);
+            toast.success("AI Analysis completed successfully!");
         } catch (error) {
-            toast.error("Error generating visualizations");
+            toast.error("Error in AI analysis");
             console.error('Error in generateVisualizations:', error);
         } finally {
             setIsProcessing(false);
